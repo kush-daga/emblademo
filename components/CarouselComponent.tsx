@@ -58,10 +58,11 @@ const CarouselComponent = ({
 	}, [adaptContainerToSlide]);
 
 	useEffect(() => {
-		if (embla && embla.slideNodes().length !== slides.length) {
-			embla.reInit(); // If the slides prop length changes, pick it up
+		if (embla) {
+			storeSlideHeights();
+			setContainerHeight();
 		}
-	}, [embla, slides]);
+	}, [embla, setContainerHeight, storeSlideHeights]);
 
 	useEffect(() => {
 		if (!embla) return;
@@ -69,14 +70,10 @@ const CarouselComponent = ({
 		console.log(
 			"RENDERING",
 			embla.slideNodes().length === 0,
-
 			embla.slideNodes()
 		);
 		embla
-			.on("init", () => {
-				storeSlideHeights();
-				setContainerHeight();
-			})
+
 			.on("resize", () => {
 				console.log("RESIZING", slideHeightsRef.current);
 				storeSlideHeights();
@@ -89,8 +86,6 @@ const CarouselComponent = ({
 
 		return () => {
 			embla
-				.off("init", storeSlideHeights)
-				.off("init", setContainerHeight)
 				.off("resize", storeSlideHeights)
 				.off("resize", setContainerHeight)
 				.off("select", onSelect);
